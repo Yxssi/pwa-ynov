@@ -1,6 +1,6 @@
-# Quasar App (quasar-project)
+# app.todo.com (front)
 
-A Quasar Project
+A simple todo list
 
 ## Install the dependencies
 ```bash
@@ -20,14 +20,6 @@ quasar dev
 yarn lint
 # or
 npm run lint
-```
-
-
-### Format the files
-```bash
-yarn format
-# or
-npm run format
 ```
 
 
