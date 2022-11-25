@@ -1,73 +1,63 @@
-import Task from "#components/task/task-model.js";
-import Joi from "joi";
+import Task from '#components/task/task-model.js'
+import Joi from 'joi'
 
-export async function index(ctx) {
+export async function index (ctx) {
   try {
-    const tasks = await Task.find({});
-    ctx.ok(tasks);
+    const tasks = await Task.find({})
+    ctx.ok(tasks)
   } catch (e) {
-    ctx.badRequest({ message: e.message });
+    ctx.badRequest({ message: e.message })
   }
 }
 
-export async function create(ctx) {
+export async function id (ctx) {
   try {
-    console.log(ctx.request.body);
-    const taskValidationSchema = Joi.object({
+    if(ctx.params.id.length <= 0) return ctx.notFound({ message: 'Id missing, task ressource not found' })
+    const task = await Task.findById(ctx.params.id).populate('list')
+    ctx.ok(task)
+  } catch (e) {
+    ctx.badRequest({ message: e.message })
+  }
+}
+
+export async function create (ctx) {
+  try {
+    const TaskValidationSchema = Joi.object({
       title: Joi.string().required(),
-      description: Joi.string().required(),
-      deadline: Joi.date(),
-    });
-
-    const { error, value } = taskValidationSchema.validate(ctx.request.body);
-    if (error) throw new Error(error);
-    console.log("No error found continuing the process", value);
-    const newTask = await Task.create(value);
-    ctx.ok(newTask);
+      list: Joi.string().required(),
+      description: Joi.string()
+    })
+    const { error, value } = TaskValidationSchema.validate(ctx.request.body)
+    if(error) throw new Error(error)
+    const task = await Task.create(value)
+    ctx.ok(task)
   } catch (e) {
-    ctx.badRequest({ message: e.message });
+    ctx.badRequest({ message: e.message })
   }
 }
 
-export async function update(ctx) {
+export async function update (ctx) {
   try {
-    const taskValidationSchema = Joi.object({
+    const TaskValidationSchema = Joi.object({
       title: Joi.string().required(),
-      description: Joi.string().required(),
-      deadline: Joi.date(),
-      status: Joi.string().default("PENDING"),
-    });
-
-    const { error, value } = taskValidationSchema.validate(ctx.request.body);
-    if (error) throw new Error(error);
-    console.log("No error found continuing the process", value);
-    const updatedTask = await Task.findByIdAndUpdate(
-      ctx.params.id,
-      {
-        $set: value,
-      },
-      {
-        runValidators: true,
-        new: true,
-      }
-    );
-    ctx.ok(updatedTask);
+      description: Joi.string(),
+      list: Joi.string().required(),
+      done: Joi.boolean()
+    })
+    const { error, value } = TaskValidationSchema.validate(ctx.request.body)
+    if(error) throw new Error(error)
+    const task = await Task.findByIdAndUpdate(ctx.params.id, value, { runValidators: true, new: true })
+    ctx.ok(task)
   } catch (e) {
-    ctx.badRequest({ message: e.message });
+    ctx.badRequest({ message: e.message })
   }
 }
 
-export async function remove(ctx) {
+export async function del (ctx) {
   try {
-    const deletedTask = await Task.findByIdAndDelete(ctx.params.id);
-    ctx.ok(deletedTask);
-  } catch (e) {
-    ctx.badRequest({ message: e.message });
+    await Task.findByIdAndDelete(ctx.params.id)
+    ctx.ok()
+  } catch (error) {
+    ctx.badRequest({ message: e.message })
   }
-}
-
-export async function id(ctx) {
-  // console.log(ctx.params)
-  // console.log(ctx.query)
-  ctx.ok({});
 }

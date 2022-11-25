@@ -1,12 +1,12 @@
-import Router from "@koa/router";
-import * as taskControllers from "#components/task/task-controllers.js";
+import Router from '@koa/router'
+import * as TaskControllers from '#components/task/task-controllers.js'
 
-const tasks = new Router();
+const tasks = new Router()
 
-tasks.get("/", taskControllers.index);
-tasks.get("/:id", taskControllers.id);
-tasks.post("/", taskControllers.create);
-tasks.put("/:id", taskControllers.update);
-tasks.delete("/:id", taskControllers.remove);
+tasks.get('/', TaskControllers.index)
+tasks.get('/:id', TaskControllers.id)
+tasks.post('/', TaskControllers.create)
+tasks.put('/:id', TaskControllers.update)
+tasks.del('/:id', TaskControllers.del)
 
-export default tasks;
+export default tasks
